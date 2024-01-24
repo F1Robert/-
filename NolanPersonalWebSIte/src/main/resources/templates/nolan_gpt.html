@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nolan(zf)GPT</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin-bottom: 70px; /* 为底部输入框预留空间 */
+            padding: 0;
+            /*background-image: url('shuizhu.jpg'); !* 替换 'shuizhu.jpg' 为你的图片路径 *!*/
+            background: lightgrey;
+            background-size:cover; /* 使背景图覆盖整个屏幕 */
+            background-position: top; /* 图片在背景中央 */
+            background-repeat: no-repeat; /* 不重复显示背景图片 */
+            /*height: 100vh; !* 设置页面高度为视口高度，确保背景图片占满整个屏幕 *!*/
+            display: block;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-container {
+            position: absolute;
+            display: none;
+            width: auto;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+        }
+
+        #loading-container {
+            display: none;
+            text-align: center;
+            width: auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        #loading-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #dialog-container{
+            border-radius: 10px;
+        }
+
+        .lds-dual-ring {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+        }
+
+        .lds-dual-ring:after {
+            content: " ";
+            display: block;
+            width: 46px;
+            height: 46px;
+            margin: 1px;
+            border-radius: 50%;
+            border: 5px solid #3498db;
+            border-color: #3498db transparent #3498db transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+
+        @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="dialog-container" class="mt-3 text-white p-3" style="background-color: rgba(100, 100, 150, 0.8)">
+        <!-- 对话信息将显示在这里 -->
+    </div>
+</div>
+<div class="container">
+<div id="loading-container" class="mt-3 bg-dark text-white p-3">
+    <p id="loading-text"><span style="color: red">Nolan</span>正在<span style="color: red">竭力</span>思考，请稍候...</p>
+    <div class="lds-dual-ring"></div>
+    <div id="novel-container">
+        <!-- 小说内容将显示在这里 -->
+    </div>
+</div>
+</div>
+
+<div class="fixed-bottom bg-light p-3">
+    <div class="container">
+        <div class="input-group">
+            <input type="text" id="user-input" class="form-control" placeholder="输入你的消息"
+                   onkeydown="handleKeyDown(event)">
+            <div class="input-group-append">
+                <button class="btn btn-primary" onclick="sendMessageJava()">发送消息</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="loader-container" id="loaderContainer">
+    <div class="loader loader-ball-pulse">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<script>
+    <!--
+    -->
+    const url = 'http://444105e2.r8.cpolar.top/api/get-key';
+    // 获取对话容器
+    const dialogContainer = document.getElementById("dialog-container");
+    const loaderContainer = document.getElementById("loaderContainer");
+    const loadingContainer = document.getElementById("loading-container");
+    var apiKey = "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"
+
+    fetch(url)
+        .then(response => response.text())
+        .then(key => {
+            apiKey = key
+            // 在这里处理获取到的密钥
+        })
+        .catch(error => console.error('Error fetching key:', error));
+
+
+    // 初始化对话信息
+    let dialog = {
+        messages: [
+            {
+                role: "system",
+                content: "欢迎访问NolanGpt."
+            }
+            // 可以添加更多系统消息...
+        ]
+    };
+
+    let sendMessages = {
+        messages: [
+            {
+                role: "system",
+                content: "欢迎访问NolanGpt."
+            }
+            // 可以添加更多系统消息...
+        ]
+    };
+
+    // 显示加载动画
+    function showLoading() {
+        loaderContainer.style.display = "block"
+        loadingContainer.style.display = "block"
+    }
+
+    // 隐藏加载动画
+    function hideLoading() {
+        loaderContainer.style.display = 'none';
+        loadingContainer.style.display = "none"
+    }
+
+    // 显示对话信息
+    function displayDialog() {
+        document.getElementById("user-input").value = "";
+        if (dialog.messages[dialog.messages.length-1].role === "system") {
+            // 追加新的消息
+            dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>${message.content}</p>`).join(''));
+        } else {
+            // 追加新的消息
+            dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p style="color: pink">可爱用户: ${message.content}</p>`).join(''));
+        }
+        sendMessages.messages[0] = dialog.messages[dialog.messages.length-1]
+        dialog.messages.length = 0
+    }
+
+    async function postData(url, data) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                // 如果响应状态码不是 200-299，表示请求失败
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result); // 处理成功的响应结果
+        } catch (error) {
+            // 发生错误时处理
+            console.error('Error:', error);
+
+            // 将错误信息发送到后端
+            sendErrorToJava(error.message);
+        }
+    }
+
+    //发送用户消息
+
+    async function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        // 替换为你的 ChatGPT API 密钥
+        // ChatGPT API Endpoint
+        const apiUrl = "https://api.openai.com/v1/chat/completions";
+
+        // 添加用户消息到对话
+        dialog.messages.push({
+            role: "user",
+            content: userInput
+        });
+        // 构建请求数据
+        displayDialog()
+        const requestData = {
+            model: "gpt-3.5-turbo",
+            messages: sendMessages.messages,
+        };
+        try {
+            showLoading()
+            // 发送 POST 请求到 ChatGPT API
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            // 解析并显示响应
+            const responseData = await response.json();
+            if (!response.ok) {
+                // 如果请求不成功，抛出错误
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const gptReply = responseData.choices[0].message.content;
+            // 添加 GPT 的回复到对话
+            dialog.messages.push({
+                role: 'system',
+                content: gptReply,
+            });
+            // 显示更新后的对话
+            hideLoading()
+            displayDialog();
+        } catch (error) { // 发生错误时处理
+            console.error('Error:', error);
+            alert(error)
+            // 将错误信息发送到后端
+            sendErrorToJava(error.message);
+            postData('/api/postData', error.message);
+        }
+    }
+
+    function sendErrorToJava(errorMessage) {
+        // 使用 fetch 或其他方法将错误信息发送到后端的 Java 层
+        // 例如，可以使用 fetch 发送一个包含错误信息的 POST 请求
+        // 注意：此处的 URL 和处理方法应根据你的实际情况进行调整
+        const errorUrl = '/api/postData';
+        fetch(errorUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({error: errorMessage}),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Failed to send error to Java.');
+                }
+            })
+            .catch(error => {
+                console.error('Error while sending error to Java:', error);
+            });
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === "Enter") {
+            // 按下回车键时调用 sendMessage() 方法
+            sendMessageJava();
+        }
+    }
+
+    // 示例：发送 POST 请求
+    const postDataExample = {
+        key: 'value',
+    };
+
+    let first = 0;
+
+    // postData('/api/postData', postDataExample);
+
+    // 初始显示对话
+    displayDialog();
+    async function sendMessageJava() {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.length <= 0) {
+            alert("请输入")
+            return
+        }
+        dialog.messages.push({
+            role: "user",
+            content: userInput
+        });
+        displayDialog()
+        showLoading()
+
+        if (first<=0){
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 成功加载 .txt 文件，获取内容并更新显示
+                    const novelText = xhr.responseText;
+                    displayNovel(novelText);
+                }
+            };
+            xhr.send();
+            first=first+1
+        }
+
+        try {
+            const response = await fetch('/api/sendMessage', {
+                method: 'POST',
+                body: JSON.stringify(sendMessages.messages[0].content),
+            }).then((result) => {
+                console.log("Nolan"+result);
+                console.log(result.json().then((result)=>{
+                    // 确保 response 中有 choices 数组和至少一个元素
+                    // 获取第一个元素的 message 属性中的 content
+                    console.log(result);
+
+                    const content = result.choices[0]?.message?.content;
+                    // 打印 content
+                    console.log(content);
+                    dialog.messages.push({
+                        role: 'system',
+                        content: content,
+                    });
+                    // 显示更新后的对话
+                    displayDialog();
+                }))
+                // 输出 "Promise resolved!"
+            }).then((result) => {
+                console.log("Nolan1"+result); // 输出 "Promise resolved!"
+            });
+            if (response == "Error"){
+                dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>讨厌 居然问人家这么难的问题</p>`).join(''));
+            }
+        } catch (error) {
+            hideLoading()
+            console.error('Error:', error);
+        }
+        hideLoading()
+        scrollToBottom()
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        var currentTime = hours + ':' + formattedMinutes;
+        var greeting;
+        var message;
+
+        if (hours < 10) {
+            greeting = '早上好！';
+            message = '欢迎访问NolanGPT,本网站使用GPT3.5接口，内网可用但是OpenAI给个人接口配置的服务器少返回数据比CPT官网慢，使用时请耐心等候。';
+        } else if (hours < 18) {
+            greeting = '工作辛苦啦！';
+            message = '欢迎访问NolanGPT,本网站使用GPT3.5接口，内网可用但是OpenAI给个人接口配置的服务器少返回数据比CPT官网慢，使用时请耐心等候。'; // 你可以替换为实际的笑话内容
+        } else {
+            greeting = '晚上好！';
+            message = '欢迎访问NolanGPT,本网站使用GPT3.5接口，内网可用但是OpenAI给个人接口配置的服务器少返回数据比CPT官网慢，使用时请耐心等候。';
+        }
+
+        // alert('当前时间：' + currentTime + '\n' + greeting + ' ' + message);
+    });
+
+    // 获取显示小说内容的元素
+    const novelContainer = document.getElementById('novel-container');
+
+    // 异步加载 .txt 文件
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', "novel.txt", true); // 替换为你的 .txt 文件路径
+    // 更新小说内容的函数
+    function displayNovel(novelText) {
+        // 将小说内容按换行符分割成数组
+        const novelLines = novelText.split('\n');
+        // 初始行号
+        let currentLine = 0;
+        // 更新小说内容的函数
+        function updateNovel() {
+            // 获取当前行的文本
+            const currentText = novelLines[currentLine];
+
+            // 显示当前行的文本
+            novelContainer.textContent = currentText;
+
+            // 移动到下一行，循环播放
+            currentLine = (currentLine + 1) % novelLines.length;
+        }
+
+        // 初始显示小说内容
+        updateNovel();
+
+        // 每3秒刷新一次小说内容
+        setInterval(updateNovel, 2000);
+    }
+
+    function scrollToBottom() {
+        // 将页面滚动到底部
+        window.onload = function() {
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+    }
+</script>
+</body>
+</html>
+

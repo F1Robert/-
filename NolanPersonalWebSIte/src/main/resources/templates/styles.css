@@ -1,0 +1,12 @@
+/* styles.css */
+body {
+    background-color: #f4f4f4;
+    padding-top: 100px;
+}
+
+.forgot-password-link {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    color: #6c757d;
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历</title>
+
+    <!-- 引入 Bootstrap 样式表 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- 自定义样式 -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .resume-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .profile-picture {
+            max-width: 5em;
+            border-radius: 50%;
+            margin-bottom: 0px;
+        }
+
+        .qrcode {
+            max-width: 150px; /* 调整二维码图片最大宽度 */
+            margin-top: -10px;
+        }
+
+        .info-section {
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <!-- 在头部添加以下脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            var currentTime = hours + ':' + formattedMinutes;
+            var greeting;
+            var message;
+
+            if (hours < 10) {
+                greeting = '早上好！';
+                message = '欢迎访问Nolan个人网站。';
+            } else if (hours < 18) {
+                greeting = '工作辛苦啦！';
+                message = '欢迎访问Nolan个人网站。'; // 你可以替换为实际的笑话内容
+            } else {
+                greeting = '晚上好！';
+                message = '欢迎访问Nolan个人网站。';
+            }
+            // alert('当前时间：' + currentTime + '\n' + greeting + ' ' + message);
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="container resume-container">
+    <!-- 个人基本信息联系方式 -->
+    <!-- 个人基本信息联系方式 -->
+    <div id="personalInfo" class="info-section section-container">
+        <div class="row">
+            <div class="col-md-9">
+                <h2>周峰(Nolan)</h2>
+                <!--                <p>个人介绍</p>-->
+                <p>求职岗位:资深应用工程师</p>
+                <p>期望薪资:20k</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <img th:src="@{resume_pic.jpg}" class="profile-picture" alt="Your Photo">
+            </div>
+        </div>
+        <!-- 二维码图片 -->
+        <div class="row">
+            <div class="col-md-9">
+                <p>手机: +8618153863035
+                </p>
+                <p>微信(WeChat)
+                </p>
+                <p>
+                    <img th:src="@{qrcode.jpg}" class="qrcode" alt="QR Code">
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <p>Email: q1509111979@gmail.com</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <!--                <p>籍贯: 湖南衡阳</p>-->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 个人工作经历 -->
+<div class="container resume-container">
+    <div id="workExperience" class="info-section section-container">
+        <h3>工作经历</h3>
+        <p>工作难点:</p>
+        <p>1.对Android系统的绘制流程的理解以及Android触控事件分发机制的使用</p>
+        <p>2.对Android自定义View的触摸事件进行分析，并对触摸事件如touch_down,touch_up,move等事件进行分类处理</p>
+        <p>3.对Android surfaceView,canvas的图形的使用和理解</p>
+
+        <p>主要技术栈</p>
+        <p>Android自定义View</p>
+        <p>Android系统事件分发</p>
+        <p><a href="https://www.honghe-tech.com/">深圳市鸿合创新信息技术科技有限责任公司(鸿合科技)</a></p>
+        <p>应届毕业校招 工作时间:2022/07/10~2023/06/21</p>
+        <p>工作职位:助理软件工程师 综合收入:9.5k</p>
+        <p>工作描述:<br>前半年主要负责大屏画图软件的维护和更新打包，以及课堂小工具的维护<br>后半年主要负责系统项目Setting和Launcher主界面的维护和更新<br>以及为新项目独立负责写一个初始化系统设置的Guide程序</br>
+        </p>
+        <!--        <p>离职原因:<br>公司组织架构变动，直属经理变动-->
+        </p>
+
+        <h4>工作难点:</h4>
+        <p>1.对Android第三方库的集成和使用，图片加载库的使用Glide与Retrofit处理HTTP请求</p>
+        <p>2.对Android集成科大讯飞语音识别SDK的经验</p>
+        <p>3.对Android蓝牙协议/串口通信协议的理解和使用，用于Android与其他设备的通信</p>
+        <p>4.对Android下xml布局的性能优化</p>
+        <p>5.对Android下app的启动优化和点击切换时的卡顿优化</p>
+        <p><a href="https://www.dottmed.com/">深圳市多特医疗技术有限公司</a></p>
+        <p>1年经验社招 工作时间:2023/06/25~2023/08/06</p>
+        <p>工作职位:android工程师 综合收入:12k</p>
+        <p>工作描述:负责独立开发Android软件，在职40天，新做两个大项目，互联网医院和叮呗BOX</p>
+        <!--        <p>离职原因:<br>公司老板欠债降薪-->
+        </p>
+
+        <p>工作难点:</p>
+        <p>1.对Android多模块软件的开发经验</p>
+        <p>2.对Android自定义View的触摸事件进行分析，并对触摸事件如touch_down,touch_up,move等事件进行分类处理</p>
+        <p>3.对Android surfaceView,canvas的图形的使用和理解</p>
+        <p><a href="https://www.shsany.com/">深圳酷源数联科技有限公司(山源科技)</a></p>
+        <p>1年经验社招 工作时间:2023/10/07~现在</p>
+        <p>工作职位:android工程师 综合收入:12K</p>
+        <p>工作描述:</p>
+    </div>
+</div>
+
+<!-- 个人技能 -->
+<div class="container resume-container">
+    <div id="personalSkill" class="info-section section-container">
+        <h3>个人技能</h3>
+        <p>对Android 图片库glide有自己的封装库</p>
+        <p>对Android 二维码功能库有自己的封装</p>
+        <p>对Android 摄像头，Android图片处理有相关的项目经验</p>
+        <p>对Android 蓝牙功能，串口数据处理有相关的项目经验</p>
+        <p>熟悉Android JNI</p>
+        <p>阅读过Android framework源码</p>
+    </div>
+</div>
+<!-- 个人教育经历 -->
+<div class="container resume-container">
+    <div id="education" class="info-section section-container">
+        <h3>教育经历</h3>
+        <p>河南理工大学 - 学士 - 软件工程 - 2018/09~2022/07</p>
+        <p>英文等级Cet4</p>
+    </div>
+</div>
+</div>
+
+<!-- 引入 Bootstrap 的 JavaScript 库，确保在 body 结尾部分 -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nolan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 保证页面至少占满一屏 */
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #444;
+            padding: 0.5em;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #666;
+        }
+
+        nav a.active {
+            background-color: #666; /* 设置高亮时的背景颜色 */
+        }
+
+        section {
+            flex: 1; /* 占据剩余的空间 */
+            padding: 0 1em;
+            overflow: auto; /* 如果内容过多，启用滚动条 */
+            background-color: #000; /* 设置剩余区域的背景色为黑色 */
+        }
+
+        #contentFrame {
+            /*flex: 1;*/
+            /*width: 100%;*/
+            /*height: 100%;*/
+            /*border: none;*/
+            flex: 1; /* 占据剩余的空间 */
+            /*padding: 2em;*/
+            overflow: hidden; /* 隐藏滚动条 */ /* 如果内容过多，启用滚动条 */
+            background-color: #000; /* 设置剩余区域的背景色为黑色 */
+        }
+    </style>
+  <link rel="apple-touch-icon" sizes="180x180" href="./tPic/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./tPic/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./tPic/favicon-16x16.png">
+  <link rel="manifest" href="/tPic/site.webmanifest">
+</head>
+<body>
+
+<!--<header>-->
+<!--    <h1>导航页</h1>-->
+<!--</header>-->
+
+<nav>
+    <a href="#" onclick="loadContent('index.html')" class="active">新华网</a>
+    <a href="#" onclick="loadContent('bilibili')">B站</a>
+    <a href="#" onclick="loadContent('chatgpt')">ChatGPT</a>
+    <a href="#" onclick="loadContent('nolangpt')">NolanGPT</a>
+    <a href="#" onclick="loadContent('about')">关于</a>
+    <!-- 其他导航项... -->
+</nav>
+
+<iframe id="contentFrame" src="https://www.news.cn"></iframe>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    function loadContent(page) {
+        // 移除当前高亮项的类
+        $('nav a.active').removeClass('active');
+        if (page === 'bilibili') {
+            // 如果点击的是"B站"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', 'https://www.bilibili.com/');
+        } else if (page === "youtube") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', 'https://www.youtube.com/');
+        } else if (page === "tuite") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', 'https://twitter.com/?lang=zh');
+        } else if (page === "nolangpt") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', './nolan_gpt.html');
+        } else if (page === "chatgpt") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', 'https://chat.openai.com/');
+        } else if (page === "about") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', './resume.html');
+        } else {
+            // 否则，正常加载页面
+            $('#contentFrame').attr('src', "https://www.news.cn");
+        }
+        // 将高亮类添加到点击的导航项上
+        $(event.target).addClass('active');
+    }
+</script>
+
+</body>
+</html>

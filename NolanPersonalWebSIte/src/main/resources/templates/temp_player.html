@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rich Text Editor Example</title>
+    <!-- 引入 Quill 富文本编辑器样式 -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:fragment="contentEditor">
+    <label for="editor">Content:</label>
+    <!-- 创建一个带有 id="editor" 的 <div> 用于加载 Quill 富文本编辑器 -->
+    <div id="editor"></div>
+    <button onclick="saveContent()">Save Content</button>
+</div>
+
+<!-- 引入 Quill 富文本编辑器脚本 -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    // 初始化 Quill 富文本编辑器
+    var quill = new Quill('#editor', {
+        theme: 'snow',  // 使用 snow 主题
+    });
+
+    // 定义保存内容的 JavaScript 函数
+    function saveContent() {
+        // 获取编辑器中的内容
+        var content = quill.root.innerHTML;
+
+        // 发送保存内容的请求（你可以使用 AJAX 发送到后端保存到数据库）
+        // 例如使用 fetch 或 jQuery.ajax
+
+        // 这里只是简单的 alert 显示内容，实际中需要发送到后端保存
+        alert('Content saved:\n' + content);
+    }
+</script>
+
+</body>
+</html>

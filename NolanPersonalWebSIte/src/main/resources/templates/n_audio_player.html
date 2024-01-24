@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>樱花音乐播放器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-size: cover;
+            background: no-repeat;
+            color: #fff;
+        }
+
+        #playlistContainer {
+            background-size: cover;
+            background: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            vertical-align: center;
+            margin-top: 6%;
+            margin-left: -52%;
+            height: auto;
+            width: 35%;
+            background: url('/wsl/wsl-image1.jpg'); /* 歌曲列表的背景图 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #playlist {
+            background-size: contain;
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            width: 60%;
+            background: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+            border-radius: 10px;
+            overflow: hidden; /* 防止内容溢出 */
+            margin-left: -30%;
+        }
+
+        #playlist li {
+            margin: 10px 0;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease; /* 添加渐变效果 */
+        }
+
+        #playlist li:hover {
+            background: rgba(255, 255, 255, 0.2); /* 鼠标悬停时的背景 */
+        }
+
+        #playlist li.active {
+            background: rgba(255, 255, 255, 0.5); /* 选中歌曲的背景 */
+        }
+
+        #audioPlayer {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 30%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2%;
+        }
+
+        #audioPlayer audio {
+            width: 100%;
+        }
+
+        #lyrics-container {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 20px;
+            line-height: 1.5;
+            height: 300px; /* 调整高度以适应你的需要 */
+        }
+
+        .lyrics {
+            transition: transform 0.5s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+<div id="playlistContainer">
+    <h3 style="color: darkslategrey">Nolan的音乐列表</h3>
+    <ul id="playlist"></ul>
+</div>
+
+<div id="audioPlayer">
+    <audio controls id="audio" preload="auto"></audio>
+</div>
+
+<script src="https://unpkg.com/lyric-parser"></script>
+<script>
+    const playlist = document.getElementById('playlist');
+    const playlistContainer = document.getElementById('playlistContainer');
+    const audio = document.getElementById('audio');
+    // 假设歌曲列表为静态文件夹中的文件
+    const songs = [
+        {name: '全世界陪我失眠-汪苏泷', path: '/mus/wsl_qsjpwsm.mp3'},
+        {name: '我想念-汪苏泷', path: '/mus/wsl_wxn.mp3'},
+// 添加更多歌曲
+    ];
+
+    const wslImages = [
+        '/wsl/wsl-image1.jpg',
+        '/wsl/wsl-image2.jpg',
+        // 添加更多 wsl 图片
+    ];
+    document.addEventListener('DOMContentLoaded', function () {
+// 动态创建歌曲列表
+        songs.forEach((song, index) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${index + 1}. ${song.name}`;
+            listItem.addEventListener('click', () => playSong(listItem, song.path, song.name));
+            console.log(song.name)
+            playlist.appendChild(listItem);
+        });
+
+        if (songs.length<10){
+            for (let i = 0; i < 10-songs.length; i++) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${songs.length + i}. ${""}`;
+                playlist.appendChild(listItem);
+            }
+        }
+    })
+
+    function playSong(listItem, path, fileName) {
+        audio.src = path;
+        audio.load();
+        audio.play();
+
+        // 更新图片
+        console.log(fileName)
+        if (fileName.includes("汪苏泷")) {
+            const randomIndex = Math.floor(Math.random() * wslImages.length);
+            playlistContainer.style.backgroundImage = "url("+wslImages[randomIndex]+")";
+        } else {
+            playlistContainer.style.backgroundImage  = ''; // 清空图片
+        }
+
+        // 移除之前选中的样式
+        const activeItem = document.querySelector('#playlist li.active');
+        if (activeItem) {
+            activeItem.classList.remove('active');
+        }
+        // 添加选中样式
+        listItem.classList.add('active');
+    }
+
+</script>
+</body>

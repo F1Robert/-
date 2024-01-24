@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .experience-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .education-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .project-experience-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .add-btn, .remove-btn {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1 align="center">填写简历信息</h1>
+<form id="resumeForm" action="/generatePdf" method="post">
+    <label for="name">姓名:</label>
+    <input type="text" id="name" name="name" value="宇智波斑" required>
+
+    <label for="gender">性别:</label>
+    <input type="text" id="gender" name="gender" value="男" required>
+
+    <label for="age">年龄:</label>
+    <input type="text" id="age" name="age" value="28" required>
+
+    <label for="phone">联系电话:</label>
+    <input type="text" id="phone" name="phone" value="未知" required>
+
+    <label for="position">求职岗位:</label>
+    <input type="text" id="position" name="position" value="宇智波家族族长" required>
+
+    <label for="salary">期望薪资:</label>
+    <input type="text" id="salary" name="salary" value="1棵查克拉神树" required>
+
+    <label for="email">邮箱:</label>
+    <input type="email" id="email" name="email" value="ban@yuzhibo.com" required>
+
+    <h2>工作经历</h2>
+    <div id="work-experience">
+        <div class="experience-item">
+            <label for="work-company">公司:</label>
+            <input id="work-company" type="text" name="work-company[]" value="木叶村" required>
+            <label for="work-position">职位:</label>
+            <input id="work-position" type="text" name="work-position[]" value="宇智波家族族长" required>
+            <label for="work-description">描述:</label>
+            <textarea id="work-description" name="work-description[]" value="负责统率宇智波家族"
+                      required></textarea>
+            <label>起止时间:</label>
+            <input type="text" name="work-start-date[]" value="2020-01" required>
+            <input type="text" name="work-end-date[]" value="至今" required>
+            <button type="button" class="remove-btn" onclick="removeExperience('work-experience')">删除</button>
+        </div>
+        <button type="button" class="add-btn" onclick="addExperience('work-experience')">添加工作经历</button>
+    </div>
+
+    <h2>项目经历</h2>
+    <div id="project-experience">
+        <div class="project-experience-item">
+            <label>项目名称:</label>
+            <input type="text" name="project-name[]" value="大战千手柱间" required>
+            <label>描述:</label>
+            <input name="project-description[]" value="详情去看动漫" required></input>
+            <button type="button" class="remove-btn" onclick="removeExperience('project-experience')">删除</button>
+        </div>
+        <button type="button" class="add-btn" onclick="addExperience('project-experience')">添加项目经历</button>
+    </div>
+
+    <h2>教育经历</h2>
+    <div id="education">
+        <div class="education-item">
+            <label>学校:</label>
+            <input type="text" name="education-school[]" value="木叶村宇智波家族" required>
+            <label>专业:</label>
+            <input type="text" name="education-major[]" value="忍术" required>
+            <label>学历:</label>
+            <input type="text" name="education-degree[]" value="神" required>
+            <label>起止时间:</label>
+            <input type="text" name="education-start-date[]" value="2020-01" required>
+            <input type="text" name="education-end-date[]" value="至今" required>
+            <button type="button" class="remove-btn" onclick="removeExperience('education')">删除</button>
+        </div>
+        <button type="button" class="add-btn" onclick="addExperience('education')">添加教育经历</button>
+    </div>
+    <button type="button" onclick="generatePdf()">导出为PDF</button>
+    <!--    <button type="submit">导出为PDF</button>-->
+</form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script>
+    function addExperience(containerId) {
+        var container = document.getElementById(containerId);
+        var newItem = container.firstElementChild.cloneNode(true);
+        container.appendChild(newItem);
+    }
+
+    function removeExperience(containerId) {
+        var container = document.getElementById(containerId);
+        var items = container.getElementsByClassName('experience-item');
+        if (items.length > 1) {
+            container.removeChild(items[items.length - 1]);
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function generatePdf() {
+        // Collect data from the form
+        var resumeData = {
+            name: $('#name').val(),
+            gender: $('#gender').val(),
+            age: $('#age').val(),
+            phone: $('#phone').val(),
+            position: $('#position').val(),
+            salary: $('#salary').val(),
+            email: $('#email').val(),
+            workExperience: [],
+            projectExperience: [],
+            education: []
+            // Add other fields or sections as needed
+        };
+
+        $('.experience-item').each(function (index) {
+            var workExperienceItem = {
+                company: $(this).find('[name="work-company[]"]').val(),
+                position: $(this).find('[name="work-position[]"]').val(),
+                description: $(this).find('[name="work-description[]"]').val(),
+                startDate: $(this).find('[name="work-start-date[]"]').val(),
+                endDate: $(this).find('[name="work-end-date[]"]').val()
+            };
+            resumeData.workExperience.push(workExperienceItem);
+        });
+
+        // Iterate over each project experience item
+        $('.project-experience-item').each(function (index) {
+            var projectExperienceItem = {
+                projectName: $(this).find('[name="project-name[]"]').val(),
+                description: $(this).find('[name="project-description[]"]').val(),
+            };
+            resumeData.projectExperience.push(projectExperienceItem);
+        });
+
+
+        $('.education-item').each(function (index) {
+            var educationItem = {
+                school: $(this).find('[name="education-school[]"]').val(),
+                major: $(this).find('[name="education-major[]"]').val(),
+                degree: $(this).find('[name="education-degree[]"]').val(),
+                startDate: $(this).find('[name="education-start-date[]"]').val(),
+                endDate: $(this).find('[name="education-end-date[]"]').val()
+            };
+            resumeData.education.push(educationItem);
+        });
+
+        console.log(resumeData);
+        // Make a POST request to the backend
+        // 使用 jQuery 的 AJAX 请求
+        $.ajax({
+            url: '/generatePdf',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(resumeData),
+            success: function () {
+                // 生成成功后重定向到下载链接
+                window.location.href = '/pdfs/resume.pdf';
+            },
+            error: function (error) {
+                console.error('Error generating PDF:', error);
+            }
+        });
+    }
+</script>
+</body>
+</html>
