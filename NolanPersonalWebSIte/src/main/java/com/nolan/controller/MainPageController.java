@@ -21,6 +21,21 @@ public class MainPageController {
         return "resume";
     }
 
+    @GetMapping("/iamBossGame.html")
+    public String showIamBossPage() {
+        return "iamBossGame";
+    }
+
+    @GetMapping("/game.html")
+    public String showGamePage() {
+        return "game";
+    }
+
+    @GetMapping("/game")
+    public String showGame2Page() {
+        return "game";
+    }
+
     @GetMapping("/nolan_gpt.html")
     public String showNolanGptPage() {
         return "nolan_gpt";

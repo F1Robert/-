@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            padding: 5px;
+            align-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 200vh;
+            /*overflow: hidden; !* 隐藏垂直滚动条 *!*/
+        }
+
+        .log-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f2f2f2;
+            padding: 15px;
+            margin: auto; /* 居中 */
+            width: 80%; /* 或者您想要的宽度 */
+            max-width: 600px; /* 设置最大宽度 */
+            height: 90vh; /* 设置高度为屏幕高度的80% */
+            overflow-y: auto; /* 允许滚动 */
+        }
+
+        .log-panel h2, .info-panel h2 {
+            color: #333;
+        }
+
+        #log-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            max-height: 100%;
+            overflow-y: auto;
+            /*overflow: hidden; !* 隐藏垂直滚动条 *!*/
+        }
+
+        #money-value {
+            display: inline-block;
+            font-size: 18px;
+            color: #007bff;
+            margin-left: 10px;
+        }
+
+        .event-modal-content {
+            align-content: center;
+            display: none;
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .event-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .event-option {
+            padding: 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .event-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 日志 -->
+
+<div id="log-panel" class="log-panel">
+    <p id="money-value">游戏进行中 金钱￥0</p>
+    <div class="event-modal-content" id="event-modal-content">
+        <span class="close" onclick="closeEventModal()">&times;</span>
+        <h2>新的一周开始了，你想要</h2>
+        <div class="event-options">
+            <div class="event-option" onclick="selectEvent('表扬员工')"><p style="color: green">表扬员工工作出色</p>
+            </div>
+            <div class="event-option" onclick="selectEvent('批评员工')"><p style="color: red">批评员工工作不认真</p>
+            </div>
+            <!--            <div class="event-option" onclick="selectEvent('送礼物给员工')">送礼物</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('听取员工建议')">听取员工建议</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('老板道歉')">道歉</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('员工聚餐')">员工聚餐</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('团建活动')">团建活动</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('画饼')">画饼</div>-->
+            <!--            <div class="event-option" onclick="selectEvent('放假')">放假一天</div>-->
+        </div>
+    </div>
+    <div id="log-list">
+    </div>
+</div>
+<!-- 事件选择弹窗 -->
+<script>
+    // 金钱值
+    let moneyValue = 0;
+    //
+    let tempMoney = 0;
+
+    let weekCount = 0;
+    // 互动日志
+    const interactionLog = document.getElementById("log-list");
+    // 你人性值
+    let bossHumanityValue = 0; // 初始人性值为50
+    let emergencyValue = 50; // 初始效率为100
+    let run = -1;
+    let count = 1;
+    // 随机事件函数列表
+    const badRandomEvents = [
+        lizhiEmployeeEvent,
+        bagongEmployeeEvent
+        // 可根据需要继续添加更多事件函数
+    ];
+
+    const goodRandomEvents = [
+        praiseEmployeeEvent,
+        sendGiftToEmployeeEvent,
+        employeeSuggestionEvent,
+        bossApologyEvent
+        // 可根据需要继续添加更多事件函数
+    ];
+
+    function openEventModal() {
+        const eventModal = document.getElementById("event-modal-content");
+        eventModal.style.display = "block";
+        const logModal = document.getElementById("log-list");
+        logModal.style.display = "none";
+        run = 1;
+    }
+
+    function closeEventModal() {
+        const eventModal = document.getElementById("event-modal-content");
+        eventModal.style.display = "none";
+        const logModal = document.getElementById("log-list");
+        logModal.style.display = "block";
+        run = -1
+    }
+
+    function selectEvent(eventName) {
+        closeEventModal();
+        switch (eventName) {
+            case "表扬员工":
+                praiseEmployeeEvent();
+                break;
+            case "批评员工":
+                criticizeEmployeeEvent();
+                break;
+            case "送礼物给员工":
+                sendGiftToEmployeeEvent();
+                break;
+            case "听取员工建议":
+                employeeSuggestionEvent();
+                break;
+            case "老板道歉":
+                bossApologyEvent();
+                break;
+            default:
+                logInteraction("无效的选择，请重新选择");
+        }
+        // 更新界面
+        updateMoneyPanel();
+    }
+
+    // 事件处理函数：表扬员工
+    function praiseEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue += 5; // 正面事件增加人性值
+            logInteraction(`你表扬了员工${employee.name},${employee.name}的工作效率上升了`, "green");
+            emergencyValue += 5; //增加效率
+        }
+    }
+
+    // 事件处理函数：批评员工
+    function criticizeEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue -= 5; // 负面事件减少人性值
+            logInteraction(`你批评了员工${employee.name},${employee.name}的怒气值增加了`, "red");
+            emergencyValue += 10; //减少效率
+        }
+    }
+
+    function criticizeBadEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue -= 20; // 负面事件减少人性值
+            logInteraction(`你当众批评了员工${employee.name},${employee.name}的工作效率降低了`, "red");
+            logInteraction(`${employee.name}的怒气值增加了很多，他现在对你很不满`, "red");
+            emergencyValue += 10;
+        }
+    }
+
+    function lizhiEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue -= 20; // 负面事件减少人性值
+            logInteraction(`因为长期对你的不满，员工${employee.name}愤怒离职了，还在公司群里问候了你的家人`, "red");
+            logInteraction(`公司的员工看到这样的事情发生，都觉得这个公司很糟，因此员工们的积极性都下降了`, "red");
+            emergencyValue -= -100; //减少效率
+        }
+    }
+
+    function bagongEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue -= 15; // 负面事件减少人性值
+            logInteraction(`因为长期对你的不满，员工${employee.name}组织大家罢工一天`, "red");
+            emergencyValue -= 300; //减少效率
+        }
+    }
+
+    // 事件处理函数：给员工送礼物
+    function sendGiftToEmployeeEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            bossHumanityValue += 3; // 正面事件增加人性值
+            emergencyValue += 5; //增加效率
+            const randomMoneyChange = Math.floor(Math.random() * 100);
+            moneyValue += randomMoneyChange;
+            logInteraction(`你送礼物给了员工${employee.name}，${employee.name}的工作态度变好了，${employee.name}的工作效率上升了，当前效率值为${emergencyValue},工作效率上升为你带来了${randomMoneyChange}的金钱收益`, "green");
+        }
+    }
+
+    // 事件处理函数：听取员工建议
+    function employeeSuggestionEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            const randomMoneyChange = Math.floor(Math.random() * 100);
+            moneyValue += randomMoneyChange;
+            bossHumanityValue += 5; // 正面事件增加人性值
+            emergencyValue += 5; //增加效率
+            bossHumanityValue += 2; // 正面事件增加人性值
+            logInteraction(`你听取了员工${employee.name}的建议，${employee.name}的工作态度变好了，${employee.name}的工作效率上升了，当前效率值为${emergencyValue},工作效率上升为你带来了${randomMoneyChange}的金钱收益`, "green");
+            updateMoneyPanel();
+        }
+    }
+
+    // 事件处理函数：你道歉
+    function bossApologyEvent() {
+        if (bossHumanityValue > -10) {
+            logInteraction(`你为之前的行为向全体员工道歉，全体员工都表现积极,工作效率提高了`, "green");
+            //增加金钱值
+            const randomMoneyChange = Math.floor(Math.random() * 100);
+            moneyValue += randomMoneyChange;
+            bossHumanityValue += 5; // 正面事件增加人性值
+            emergencyValue += 5; //增加效率
+            logInteraction(`因为你诚恳的道歉，公司内的工作效率上升了，当前效率值为${emergencyValue},工作效率上升为你带来了${randomMoneyChange}的金钱收益`, "green");
+            updateMoneyPanel();
+        } else {
+            logInteraction(`你为之前的行为向全体员工道歉，但是员工似乎不屑一顾`, "red");
+            logInteraction(`你的经营似乎逐渐出现问题了，或许你该好好考虑`, "red");
+        }
+    }
+
+    // 获取随机员工信息的辅助函数
+    function getRandomEmployee() {
+        // 模拟一些员工信息，实际情况中应该从真实数据中随机选择
+        const employees = [
+            {name: "小明"},
+            {name: "小红"},
+            {name: "小刚"},
+            // 可以继续添加更多员工
+            {name: "小李"},
+            {name: "小王"},
+            {name: "小赵"},
+            {name: "小孙"},
+            {name: "小钱"},
+            {name: "小杨"},
+            {name: "小张"},
+            {name: "小陈"},
+            {name: "小黄"},
+            {name: "小吴"},
+            {name: "小郑"},
+            {name: "小马"},
+            {name: "小周"},
+        ];
+
+        const randomIndex = Math.floor(Math.random() * employees.length);
+        return employees[randomIndex];
+    }
+
+    // 事件处理函数：摸鱼事件
+    function slackOffEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            const slackOffOptions = [
+                {
+                    description: "在办公桌上偷偷摸鱼",
+                    effect: -2,
+                    message: `${employee.name}的工作效率降低了，被发现在办公桌上摸鱼。`
+                },
+                {
+                    description: "偷偷溜到休息室打游戏",
+                    effect: -2,
+                    message: `${employee.name}被发现在休息室打游戏，工作效率下降。`
+                },
+                {
+                    description: "假装工作，实际上在刷社交媒体",
+                    effect: -5,
+                    message: `${employee.name}假装在工作，但实际上在刷社交媒体，效率降低。`
+                },
+                {
+                    description: "和同事聊天，完全不管工作",
+                    effect: -5,
+                    message: `${employee.name}花了很多时间和同事聊天，工作效率大幅下降。`
+                },
+                {
+                    description: "午休时间变成午睡时间",
+                    effect: -2,
+                    message: `${employee.name}在午休时间选择睡觉，工作效率受到影响。`
+                },
+                {
+                    description: "无视会议，专注玩手机",
+                    effect: -2,
+                    message: `${employee.name}在会议期间完全不关注，专注玩手机，工作效率受到负面影响。`
+                },
+                {
+                    description: "突然变沉默，偷偷看小说",
+                    effect: -2,
+                    message: `${employee.name}突然变得沉默，原来是在偷偷看小说，工作效率降低。`
+                },
+                // 可以继续添加更多摸鱼事件选项
+            ];
+            const randomIndex = Math.floor(Math.random() * slackOffOptions.length);
+            const selectedOption = slackOffOptions[randomIndex];
+            emergencyValue += selectedOption.effect; // 减少效率
+            logInteraction(selectedOption.message, "red");
+            logInteraction(`你的员工${employee.name}在摸鱼，公司的效率降低了，当前效率值为${emergencyValue}`, "red");
+        }
+    }
+
+    function logInteraction(message, color = "black") {
+        // 记录互动日志
+        const logItem = document.createElement("li");
+        logItem.textContent = message;
+        logItem.style.color = color;
+        interactionLog.appendChild(logItem);
+        // 滚动到最底部
+        interactionLog.scrollTop = interactionLog.scrollHeight;
+    }
+
+    function updateMoneyPanel() {
+        // 更新金钱值面板
+        const moneyValueElement = document.getElementById("money-value");
+        moneyValueElement.textContent = `游戏正在进行中 你的金钱为￥${moneyValue}`;
+
+        // 检查是否达到解锁成就的条件
+        checkAchievements();
+    }
+
+    function showInteractionModal() {
+        // 显示互动面板
+        const interactionModal = document.getElementById("interaction-modal");
+        interactionModal.style.display = "block";
+    }
+
+    function closeInteractionModal() {
+        // 关闭互动面板
+        const interactionModal = document.getElementById("interaction-modal");
+        interactionModal.style.display = "none";
+    }
+
+    function getRandomEvent() {
+        // 从随机事件列表中随机选择一个事件
+        const randomIndex = Math.floor(Math.random() * goodRandomEvents.length);
+        return goodRandomEvents[randomIndex];
+    }
+
+    function getBadRandomEvent() {
+        // 从随机事件列表中随机选择一个事件
+        const randomIndex = Math.floor(Math.random() * badRandomEvents.length);
+        return badRandomEvents[randomIndex];
+    }
+
+    function simulateRandomEvent() {
+        if (weekCount === 4) {
+            summarizeGame()
+            return;
+        }
+        openEventModal();
+    }
+
+    // 模拟一些互动和金钱变化
+    setInterval(() => {
+        if (run > 0) {
+            return
+        }
+        // 模拟基础金钱变化
+        const randomMoneyChange = emergencyValue * 2;
+        moneyValue += randomMoneyChange;
+        if (randomMoneyChange > 0) {
+            logInteraction(`公司完成了一笔订单，赚取了${randomMoneyChange}的金钱`, "green");
+        } else {
+            logInteraction(`公司经营不佳，亏损了${randomMoneyChange}的金钱`, "red");
+        }
+        //模拟随机事件触发
+        if (bossHumanityValue >= 0) {
+            slackOffEvent()
+        } else {
+            if (Math.random() < 0.3 && bossHumanityValue <= -5) {
+                lizhiEmployeeEvent()
+            }
+            if (Math.random() < 0.3 && bossHumanityValue <= -10) {
+                bagongEmployeeEvent()
+            }
+            logInteraction(`由于你的严厉，${getRandomEmployee().name}对你不满`, "green");
+        }
+        if (emergencyValue > 50) {
+            logInteraction(`大家工作积极，经营效率上升，经营效率为${emergencyValue}，因经营效率你每天额外赚取${(emergencyValue - 50) * 2}的金钱`, "green");
+        }
+        // 初始更新金钱值面板
+        updateMoneyPanel();
+        if (count === 5) {
+            tempMoney = moneyValue - tempMoney
+            logInteraction(`上周在你的努力下，赚取了${tempMoney}的金钱`, "green");
+            count = 1;
+            weekCount += 1
+            simulateRandomEvent();
+        } else {
+            count += 1
+        }
+    }, 5000); // 每隔5秒模拟一次
+    // 初始更新金钱值面板
+
+    // 检查解锁成就的条件
+    function checkAchievements() {
+
+        if (moneyValue > 0) {
+            const achievements = [
+                {threshold: 100, message: "解锁成就：初出茅庐，金钱突破100！"},
+                {threshold: 300, message: "解锁成就：小试牛刀，金钱突破300！"},
+                {threshold: 500, message: "解锁成就：日进斗金，金钱突破500！"},
+                {threshold: 1000, message: "解锁成就：小有成就，金钱突破1000！"},
+                {threshold: 3000, message: "解锁成就：财源广进，金钱突破3000！"},
+                {threshold: 5000, message: "解锁成就：富甲一方，金钱突破5000！"},
+                {threshold: 8000, message: "解锁成就：富可敌国，金钱突破8000！"},
+                {threshold: 10000, message: "解锁成就：巨富之路，金钱突破10000！"},
+                {threshold: 50000, message: "解锁成就：百万富翁，金钱突破50000！"},
+                {threshold: 100000, message: "解锁成就：千万富翁，金钱突破100000！"},
+            ];
+
+
+            let maxAchievement = null;
+
+            for (const achievement of achievements) {
+                if (moneyValue >= achievement.threshold) {
+                    if (!maxAchievement || achievement.threshold > maxAchievement.threshold) {
+                        maxAchievement = achievement;
+                    }
+                }
+            }
+
+            if (maxAchievement) {
+                logInteraction(maxAchievement.message, "blue");
+            }
+        } else {
+            // 负向成就数组
+            const achievements = [
+                {threshold: 1000, message: "解锁成就：亏损初现，金钱跌破-1000！"},
+                {threshold: 3000, message: "解锁成就：财运不佳，金钱跌破-3000！"},
+                {threshold: 5000, message: "解锁成就：入不敷出，金钱跌破-5000！"},
+                {threshold: 8000, message: "解锁成就：破产边缘，金钱跌破-8000！"},
+                {threshold: 10000, message: "解锁成就：债台高筑，金钱跌破-10000！"},
+                {threshold: 50000, message: "解锁成就：赤贫如洗，金钱跌破-50000！"},
+                {threshold: 100000, message: "解锁成就：身无分文，金钱跌破-100000！"},
+            ];
+            let maxAchievement = null;
+            for (const achievement of achievements) {
+                if (moneyValue <= -achievement.threshold) {
+                    if (!maxAchievement || achievement.threshold > maxAchievement.threshold) {
+                        maxAchievement = achievement;
+                    }
+                }
+            }
+
+            if (maxAchievement) {
+                logInteraction(maxAchievement.message, "blue");
+            }
+        }
+
+    }
+
+    updateMoneyPanel();
+
+    // 游戏结束总结评价
+    function summarizeGame() {
+        run = 1
+        let score = 0;
+        let evaluation = "";
+
+        // 根据 emergency 进行评分和评价
+        if (emergencyValue > 50) {
+            score += 80;
+            evaluation += "公司在这个时期表现得非常高效，犹如工业革命时期的繁荣。" + "\n";
+        } else {
+            score -= 50;
+            evaluation += "公司在这个时期效率不高，犹如经济大萧条时期的低谷。" + "\n";
+        }
+
+        // 根据 bossHumanityValue 进行评分和评价
+        if (bossHumanityValue >= 0) {
+            score += 30;
+            evaluation += "作为老板，你在人际关系上表现得很好，你似乎是个仁慈的老板，员工对你印象深刻，但公司的经营不是 做个好人 这样简单的事情，似乎赚钱和处理员工关系对你来说很难平衡，不是吗？" + "\n";
+        } else {
+            score -= 30;
+            evaluation += "作为老板，你的人际关系有些紧张，员工对你不太满意，但你关注的不是和员工的关系，不是吗？。" + "\n";
+        }
+
+        // 根据 money 进行评分和评价
+        if (moneyValue >= 100000) {
+            score += 100;
+            evaluation += "公司财政状况非常良好，犹如黄金时代的繁荣。" + "\n";
+        } else if (moneyValue >= 50000) {
+            score += 80;
+            evaluation += "公司财政状况较好，犹如文艺复兴时期的繁荣。" + "\n";
+        } else if (moneyValue >= 10000) {
+            score += 50;
+            evaluation += "公司财政状况一般，犹如中世纪的平凡时期。" + "\n";
+        } else if (moneyValue < 0) {
+            evaluation += "你的经营似乎让公司发生了很严重的罢工事件,你的负债高达" + moneyValue + "\n";
+            score -= 50;
+            evaluation += "公司财政状况较差，犹如大萧条时期的经济困难。" + "\n";
+        } else {
+            evaluation += "似乎没有赚到多少钱，不是吗" + "\n"
+        }
+
+        // 输出最终评价和得分
+        logInteraction("游戏结束，总结评价：");
+        logInteraction("得分：" + score + "\n");
+        logInteraction("\n" + evaluation);
+        return
+    }
+
+    // 在游戏结束时调用 summarizeGame 函数
+    // 假设这是游戏结束的地方
+    // ...
+    // 示例结束
+</script>
+</body>
+</html>
