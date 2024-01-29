@@ -16,6 +16,11 @@ public class MainPageController {
         return "index";
     }
 
+    @GetMapping("/logs")
+    public String showLogs() {
+        return "logs";
+    }
+
     @GetMapping("/resume.html")
     public String showResumePage() {
         return "resume";
