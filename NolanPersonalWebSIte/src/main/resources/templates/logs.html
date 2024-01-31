@@ -46,7 +46,9 @@
 
   // 使用 Fetch API 从服务器获取 log 数据
   function fetchLogs(page) {
-    fetch(`/searchLogs?keyword=&page=${page}&size=100`)
+    searchInput = document.getElementById('searchInput');
+    var keyword = searchInput.value
+    fetch(`/searchLogs?keyword=${keyword}&page=${page}&size=100`)
             .then(response => response.json())
             .then(data => {
               // 处理从服务器获取的 log 数据

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nolan(zf)GPT</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -12,7 +12,7 @@
             padding: 0;
             /*background-image: url('shuizhu.jpg'); !* 替换 'shuizhu.jpg' 为你的图片路径 *!*/
             background: lightgrey;
-            background-size:cover; /* 使背景图覆盖整个屏幕 */
+            background-size: cover; /* 使背景图覆盖整个屏幕 */
             background-position: top; /* 图片在背景中央 */
             background-repeat: no-repeat; /* 不重复显示背景图片 */
             /*height: 100vh; !* 设置页面高度为视口高度，确保背景图片占满整个屏幕 *!*/
@@ -47,7 +47,7 @@
             margin-bottom: 10px;
         }
 
-        #dialog-container{
+        #dialog-container {
             border-radius: 10px;
         }
 
@@ -87,13 +87,14 @@
     </div>
 </div>
 <div class="container">
-<div id="loading-container" class="mt-3 bg-dark text-white p-3">
-    <p id="loading-text"><span style="color: red">Nolan</span>正在<span style="color: red">竭力</span>思考，请稍候...</p>
-    <div class="lds-dual-ring"></div>
-    <div id="novel-container">
-        <!-- 小说内容将显示在这里 -->
+    <div id="loading-container" class="mt-3 bg-dark text-white p-3">
+        <p id="loading-text"><span style="color: red">Nolan</span>正在<span style="color: red">竭力</span>思考，请稍候...
+        </p>
+        <div class="lds-dual-ring"></div>
+        <div id="novel-container">
+            <!-- 小说内容将显示在这里 -->
+        </div>
     </div>
-</div>
 </div>
 
 <div class="fixed-bottom bg-light p-3">
@@ -171,14 +172,14 @@
     // 显示对话信息
     function displayDialog() {
         document.getElementById("user-input").value = "";
-        if (dialog.messages[dialog.messages.length-1].role === "system") {
+        if (dialog.messages[dialog.messages.length - 1].role === "system") {
             // 追加新的消息
             dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>${message.content}</p>`).join(''));
         } else {
             // 追加新的消息
             dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p style="color: pink">可爱用户: ${message.content}</p>`).join(''));
         }
-        sendMessages.messages[0] = dialog.messages[dialog.messages.length-1]
+        sendMessages.messages[0] = dialog.messages[dialog.messages.length - 1]
         dialog.messages.length = 0
     }
 
@@ -303,6 +304,7 @@
 
     // 初始显示对话
     displayDialog();
+
     async function sendMessageJava() {
         const userInput = document.getElementById("user-input").value;
         if (userInput.length <= 0) {
@@ -316,8 +318,8 @@
         displayDialog()
         showLoading()
 
-        if (first<=0){
-            xhr.onreadystatechange = function() {
+        if (first <= 0) {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     // 成功加载 .txt 文件，获取内容并更新显示
                     const novelText = xhr.responseText;
@@ -325,7 +327,7 @@
                 }
             };
             xhr.send();
-            first=first+1
+            first = first + 1
         }
 
         try {
@@ -333,8 +335,8 @@
                 method: 'POST',
                 body: JSON.stringify(sendMessages.messages[0].content),
             }).then((result) => {
-                console.log("Nolan"+result);
-                console.log(result.json().then((result)=>{
+                console.log("Nolan" + result);
+                console.log(result.json().then((result) => {
                     // 确保 response 中有 choices 数组和至少一个元素
                     // 获取第一个元素的 message 属性中的 content
                     console.log(result);
@@ -351,13 +353,18 @@
                 }))
                 // 输出 "Promise resolved!"
             }).then((result) => {
-                console.log("Nolan1"+result); // 输出 "Promise resolved!"
+                if (result === "Error") {
+                    dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>讨厌 居然问人家这么难的问题</p>`).join(''));
+                }
+
+                console.log("Nolan1" + result); // 输出 "Promise resolved!"
             });
-            if (response == "Error"){
+            if (response === "Error") {
                 dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>讨厌 居然问人家这么难的问题</p>`).join(''));
             }
         } catch (error) {
             hideLoading()
+            dialogContainer.insertAdjacentHTML('beforeend', dialog.messages.map(message => `<p><span style="color: yellow">Nolan: </span>讨厌 APIKey被用光了</p>`).join(''));
             console.error('Error:', error);
         }
         hideLoading()
@@ -399,6 +406,7 @@
         const novelLines = novelText.split('\n');
         // 初始行号
         let currentLine = 0;
+
         // 更新小说内容的函数
         function updateNovel() {
             // 获取当前行的文本
@@ -413,14 +421,13 @@
 
         // 初始显示小说内容
         updateNovel();
-
         // 每3秒刷新一次小说内容
         setInterval(updateNovel, 2000);
     }
 
     function scrollToBottom() {
         // 将页面滚动到底部
-        window.onload = function() {
+        window.onload = function () {
             window.scrollTo(0, document.body.scrollHeight);
         };
     }

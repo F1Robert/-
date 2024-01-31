@@ -358,6 +358,40 @@
         }
     }
 
+    function voluntaryEvent() {
+        const employee = getRandomEmployee();
+        if (employee) {
+            const voluntaryOptions = [
+                {
+                    description: "在办公室给大家发蛋黄派",
+                    effect: 8,
+                    message: `${employee.name}的行为让大家的心情值上升了，工作效率上升。`
+                },
+                {
+                    description: "讲笑话，把大家逗笑了",
+                    effect: 5,
+                    message: `${employee.name}在讲笑话，把大家逗笑了，工作效率上升。`
+                },
+                {
+                    description: "帮助新来的员工进行工作",
+                    effect: 10,
+                    message: `${employee.name}帮助新来的员工进行工作，工作效率上升。`
+                },
+                {
+                    description: "组织大家进行紧急加班",
+                    effect: 20,
+                    message: `${employee.name}组织大家进行紧急加班，工作效率上升。`
+                },
+                // 可以继续添加更多正面事件选项
+            ];
+            const randomIndex = Math.floor(Math.random() * slackOffOptions.length);
+            const selectedOption = slackOffOptions[randomIndex];
+            emergencyValue += selectedOption.effect; // 减少效率
+            logInteraction(selectedOption.message, "red");
+            logInteraction(`你的员工${employee.name}在摸鱼，公司的效率降低了，当前效率值为${emergencyValue}`, "red");
+        }
+    }
+
     function logInteraction(message, color = "black") {
         // 记录互动日志
         const logItem = document.createElement("li");
@@ -422,18 +456,22 @@
         } else {
             logInteraction(`公司经营不佳，亏损了${randomMoneyChange}的金钱`, "red");
         }
-        //模拟随机事件触发
-        if (bossHumanityValue >= 0) {
-            slackOffEvent()
+
+        if (bossHumanityValue > 10 && Math.random() < 0.5) {
+            voluntaryEvent()
+        } else if (bossHumanityValue >= 0) {
+            logInteraction('在你的经营下大家表现良好，没有员工偷懒摸鱼', 'green')
         } else {
+            slackOffEvent()
             if (Math.random() < 0.3 && bossHumanityValue <= -5) {
                 lizhiEmployeeEvent()
             }
             if (Math.random() < 0.3 && bossHumanityValue <= -10) {
                 bagongEmployeeEvent()
             }
-            logInteraction(`由于你的严厉，${getRandomEmployee().name}对你不满`, "green");
+            logInteraction(`由于你的严厉，${getRandomEmployee().name}对你不满`, "red");
         }
+
         if (emergencyValue > 50) {
             logInteraction(`大家工作积极，经营效率上升，经营效率为${emergencyValue}，因经营效率你每天额外赚取${(emergencyValue - 50) * 2}的金钱`, "green");
         }
@@ -448,7 +486,7 @@
         } else {
             count += 1
         }
-    }, 5000); // 每隔5秒模拟一次
+    }, 3000); // 每隔5秒模拟一次
     // 初始更新金钱值面板
 
     // 检查解锁成就的条件

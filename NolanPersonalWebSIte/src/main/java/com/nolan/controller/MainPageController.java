@@ -21,9 +21,24 @@ public class MainPageController {
         return "logs";
     }
 
+    @GetMapping("/postPage")
+    public String showPostPage() {
+        return "post_page";
+    }
+
+    @GetMapping("/genshin")
+    public String showGenshin() {
+        return "genshin";
+    }
+
     @GetMapping("/resume.html")
     public String showResumePage() {
         return "resume";
+    }
+
+    @GetMapping("/profile.html")
+    public String showProfile() {
+        return "profile";
     }
 
     @GetMapping("/iamBossGame.html")

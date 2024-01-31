@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nolan精选</title>
+    <!-- 引入 Bootstrap 样式表 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* 自定义样式 */
+        body {
+            padding: 20px;
+        }
+
+        .thumbnail {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card {
+            width: 18rem; /* 固定卡片宽度 */
+            margin-bottom: 20px; /* 调整卡片之间的间距 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Nolan精选</h1>
+
+    <div class="row mt-3">
+        <!-- 使用 Thymeleaf 模板引擎循环展示视频列表 -->
+        <div th:each="video : ${videoList}" class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card">
+                <img th:src="@{'/thumbnails/' + ${video.replace('.mp4', '.jpg')}}" class="card-img-top thumbnail"
+                     alt="Preview Image">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${video}"></h5>
+                    <a th:href="@{${video}}" class="btn btn-primary">播放</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入 Bootstrap JavaScript 和 Popper.js -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
