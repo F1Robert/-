@@ -16,6 +16,11 @@ public class MainPageController {
         return "index";
     }
 
+    @GetMapping("/exhibition")
+    public String showExhibitionPage() {
+        return "exhibition";
+    }
+
     @GetMapping("/logs")
     public String showLogs() {
         return "logs";
@@ -84,6 +89,10 @@ public class MainPageController {
     @GetMapping("/make_resume.html")
     public String makeResumePage() {
         return "make_resume";
+    }
+@GetMapping("/make_resume_2.html")
+    public String makeResumePage2() {
+        return "make_resume_2";
     }
 
     @Autowired

@@ -13,12 +13,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // 连接建立后的处理逻辑
         System.out.println("WebSocket connection established");
+        sendPushMessage(session, "连接已经建立");
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // 处理接收到的消息
-        sendPushMessage(session, "服务器收到消息"+message.getPayload());
+        sendPushMessage(session, "服务器收到消息" + message.getPayload());
     }
 
     @Override

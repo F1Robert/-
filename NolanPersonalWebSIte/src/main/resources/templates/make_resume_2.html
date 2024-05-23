@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宇智波斑的简历</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0 auto;
+      max-width: 800px;
+      padding: 20px;
+      background-color: #f4f4f4;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #555;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #777;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section-heading {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 20px);
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<script src="jspdf.umd.min.js"></script>
+<script>
+  function saveAsPDF() {
+    const doc = new jsPDF();
+    doc.html(document.body, {
+      callback: function (doc) {
+        doc.save("resume.pdf");
+      }
+    });
+  }
+</script>
+<h1>宇智波斑的简历</h1>
+<button onclick="saveAsPDF()">保存为PDF</button>
+<table>
+  <tr>
+    <th colspan="2">个人信息</th>
+  </tr>
+  <tr>
+    <td><label>姓名:</label></td>
+    <td><input type="text" id="name" name="name" value="宇智波斑"></td>
+  </tr>
+  <tr>
+    <td><label>性别:</label></td>
+    <td><input type="text" id="gender" name="gender" value="男"></td>
+  </tr>
+  <tr>
+    <td><label>年龄:</label></td>
+    <td><input type="text" id="age" name="age" value="28"></td>
+  </tr>
+  <tr>
+    <td><label>联系电话:</label></td>
+    <td><input type="text" id="phone" name="phone" value="未知"></td>
+  </tr>
+  <tr>
+    <td><label>求职岗位:</label></td>
+    <td><input type="text" id="position" name="position" value="宇智波家族族长"></td>
+  </tr>
+  <tr>
+    <td><label>期望薪资:</label></td>
+    <td><input type="text" id="salary" name="salary" value="1棵查克拉神树"></td>
+  </tr>
+  <tr>
+    <td><label>邮箱:</label></td>
+    <td><input type="text" id="email" name="email" value="ban@yuzhibo.com"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="4">工作经历</th>
+  </tr>
+  <tr>
+    <td><label>公司:</label></td>
+    <td><input type="text" id="work-company" name="work-company" value="木叶村"></td>
+    <td><label>职位:</label></td>
+    <td><input type="text" id="work-position" name="work-position" value="宇智波家族族长"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><label>描述:</label></td>
+    <td colspan="2"><input type="text" id="work-description" name="work-description" value="负责统率宇智波家族"></td>
+  </tr>
+  <tr>
+    <td><label>起始时间:</label></td>
+    <td><input type="text" id="work-start-date" name="work-start-date" value="2020-01"></td>
+    <td><label>结束时间:</label></td>
+    <td><input type="text" id="work-end-date" name="work-end-date" value="至今"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="2">项目经历</th>
+  </tr>
+  <tr>
+    <td><label>项目名称:</label></td>
+    <td><input type="text" id="project-name" name="project-name" value="大战千手柱间"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><label>描述:</label></td>
+  </tr>
+  <tr>
+    <td colspan="2"><input type="text" id="project-description" name="project-description" value="详情去看动漫"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="4">教育经历</th>
+  </tr>
+  <tr>
+    <td><label>学校:</label></td>
+    <td><input type="text" id="education-school" name="education-school" value="木叶村宇智波家族"></td>
+    <td><label>专业:</label></td>
+    <td><input type="text" id="education-major" name="education-major" value="忍术"></td>
+  </tr>
+  <tr>
+    <td><label>学历:</label></td>
+    <td><input type="text" id="education-degree" name="education-degree" value="神"></td>
+    <td><label>起始时间:</label></td>
+    <td><input type="text" id="education-start-date" name="education-start-date" value="2020-01"></td>
+    <td><label>结束时间:</label></td>
+    <td><input type="text" id="education-end-date" name="education-end-date" value="至今"></td>
+  </tr>
+</table>
+</body>
+</html>

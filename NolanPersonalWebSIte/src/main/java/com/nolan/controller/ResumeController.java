@@ -24,6 +24,11 @@ public class ResumeController {
         return "make_resume";
     }
 
+    @RequestMapping("/make_resume_2")
+    public String index2() {
+        return "make_resume_2";
+    }
+
     @PostMapping("/generatePdf")
     public ResponseEntity<byte[]> generatePdf(@RequestBody ResumeData resumeData) throws IOException, DocumentException {
         ResumePdfService resumePdfService = new ResumePdfService();

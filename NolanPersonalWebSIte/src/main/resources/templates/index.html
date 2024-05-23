@@ -70,10 +70,12 @@
 </head>
 <body>
 <nav>
-    <a href="#" onclick="loadContent('profile')" class="active">Nolan说</a>
+    <!--    <a href="#" onclick="loadContent('profile')" class="active">Nolan说</a>-->
+    <a href="#" onclick="loadContent('exhibition')" class="active">作品展示</a>
     <a href="#" onclick="loadContent('nolangpt')">诺言GPT</a>
-    <a href="#" onclick="loadContent('make_resume')">简历生成pdf工具</a>
-    <a href="#" onclick="loadContent('i_am_boss')">Boss模擬器</a>
+    <a href="#" onclick="loadContent('make_resume')">简历工具</a>
+    <!--    <a href="#" onclick="loadContent('make_resume_2')">简历生成pdf工具</a>-->
+    <a href="#" onclick="loadContent('i_am_boss')">小游戏</a>
     <!--    <a href="#" onclick="loadContent('github')">Github</a>-->
     <!--    <a href="#" onclick="loadContent('bilibili')">B站</a>-->
     <!--    <a href="#" onclick="loadContent('chatgpt')">CGPT</a>-->
@@ -81,10 +83,10 @@
     <!--    <a href="#" onclick="loadContent('record')">学录音</a>-->
     <!--    <a href="#" onclick="loadContent('n_audio_player')">诺音乐</a>-->
     <!--    <a href="#" onclick="loadContent('namepk')">竞技场</a>-->
-    <a href="#" onclick="loadContent('about')">关于</a>
+    <a href="#" onclick="loadContent('about')">关于我</a>
     <!-- 其他导航项... -->
 </nav>
-<iframe id="contentFrame" src="/user/profile"></iframe>
+<iframe id="contentFrame" src="/exhibition"></iframe>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     function loadContent(page) {
@@ -126,12 +128,18 @@
         } else if (page === "make_resume") {
             // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
             $('#contentFrame').attr('src', 'make_resume.html');
+        } else if (page === "make_resume_2") {
+            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            $('#contentFrame').attr('src', 'make_resume_2.html');
         } else if (page === "i_am_boss") {
             // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
             $('#contentFrame').attr('src', 'iamBossGame.html');
         } else if (page === "profile") {
-            // 如果点击的是"油管"，则只刷新内嵌的 HTML 页面
+            // 发布post的帖子页面，则只刷新内嵌的 HTML 页面
             $('#contentFrame').attr('src', '/user/profile');
+        } else if (page === "exhibition") {
+            //作品展示界面
+            $('#contentFrame').attr('src', '/exhibition');
         } else {
             // 否则，正常加载页面
             $('#contentFrame').attr('src', "https://cn.chinadaily.com.cn/");
